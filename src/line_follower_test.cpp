@@ -32,21 +32,12 @@ vector<vector<Point> > polygons;
 
 //functions
 double dst(Point2f, Point2f);
-double imageDetect(Mat);
-void speedRight();
-void speedLeft();
-void speedForward();
-void speedBackward();
-
-
-
 
 int main(int argc,char** argv)
 {
     
     ros::init(argc,argv,"line_follow");
     ros::NodeHandle n;
-ros::Publisher conf_code=n.advertise<std_msgs::UInt16>("/code", 1);
 ros::Publisher leftpub=n.advertise<std_msgs::UInt16>("sideleftspeed",1);
 ros::Publisher rightpub=n.advertise<std_msgs::UInt16>("siderightspeed",1);
 std_msgs::UInt16 msg1,msg2;
@@ -73,20 +64,10 @@ std_msgs::UInt16 msg1,msg2;
             break;
         }
 
-
-
-
         //cout << s.width << "  " << s.height;
         //transpose(src, src);
         src = cartesianRotate(src, -1);
         //flip(src,src,1);
-        int foundPath=pathDetect(src);
-
-        switch(foundPath);
-
-        {
-
-        case 4:
         resize(src, src, Size(640, 480));
         //transpose(src, src);
         op = src(Rect(0, src.rows*0.5, (src.cols), src.rows*0.5));
@@ -194,20 +175,9 @@ rightpub.publish(msg2);
 
         imshow("thres", src_gray);
         imshow("line", line);
-break;
-            case 2:
-                //speed of left and right motor
-       break;
-            case 3:
-                //speed of left and right motor
 
-                break;
 
-            case 1:
-                //hghgf
-                break;
 
-}
 
             //	waitKey(0);
 
@@ -254,88 +224,4 @@ Mat cartesianRotate(Mat image, int method)
     if (method >0)
         transpose(rotated, rotated);
     return rotated;
-}
-
-int  pathDetect(Mat img)
-{
-    vector<Mat> img_base();
-    int no_of_bases=4;
-    // 1 = only water  2=small path 3= most path 4= more than 50 percent path 5=maximum path
-    for(int i=0;i<no_of_bases;i++)
-    {
-        Mat base=imread("i.jpg");
-        //cvtColor( base, base, COLOR_BGR2HSV );
-        img_base.push_back(base);
-    }
-
-    Mat img_test=img.clone();
-
-    /// Using 50 bins for hue and 60 for saturation
-       int h_bins = 50; int s_bins = 60;
-       int histSize[] = { h_bins, s_bins };
-
-       // hue varies from 0 to 179, saturation from 0 to 255
-       float h_ranges[] = { 0, 180 };
-       float s_ranges[] = { 0, 256 };
-
-       const float* ranges[] = { h_ranges, s_ranges };
-
-       // Use the o-th and 1-st channels
-       int channels[] = { 0, 1 };
-
-       /// Histograms
-       MatND histograms_bot;
-       vector<MatND> histograms(no_of_bases);
-
-       /// Calculate the histograms for the HSV images
-       for(int i=0;i<no_of_bases;i++)
-       {
-       //calcHist( &hsv_base, 1, channels, Mat(), hist_base, 2, histSize, ranges, true, false );
-      // normalize( hist_base, hist_base, 0, 1, NORM_MINMAX, -1, Mat() );
-       calHist(&img_base(i),1,channels,Mat(),histograms(i),2,histSize,ranges,true,false);
-       normalize(histograms(i),histograms(i),0,1,NORM_MINMAX,-1,Mat());
-
- }
-       calHist(&img_test,1,channels,Mat(),histograms_bot,2,histSize,ranges,true,false);
-       normalize(histograms_bot,histograms_bot,0,1,NORM_MINMAX,-1,Mat());
-
-       int compare_method=1;double min_value;
-       vector<double> compare_values(no_of_bases);
-
-       for(int i=0;i<no_of_bases;i++)
-       {
-       //calcHist( &hsv_base, 1, channels, Mat(), hist_base, 2, histSize, ranges, true, false );
-      // normalize( hist_base, hist_base, 0, 1, NORM_MINMAX, -1, Mat() );
-  compare_values[i] = compareHist(histograms[i], histograms_bot, compare_method );
-          if(min_value>compare_values[i])
-          {
-              min_value=compare_values[i];
-              key =i;
-
-          }
-
- }
-
-       return i;
-
-
-
-
-}
-
-void speedRight()
-{
-
-}
-void speedLeft()
-{
-
-}
-void speedForward()
-{
-
-}
-void speedBackward()
-{
-
 }
